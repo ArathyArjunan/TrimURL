@@ -48,5 +48,14 @@ def redirect_to_original(request, code):
     return redirect(link.original_url)
 
 
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_link(request, code):
+    link = get_object_or_404(Link, short_code=code, user=request.user)
+    link.delete()
+    return Response({"message": "Link deleted successfully"}, status=status.HTTP_200_OK)
+
+
+
 def frontend(request):
     return render(request, 'index.html')

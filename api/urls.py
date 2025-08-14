@@ -10,4 +10,5 @@ urlpatterns = [
     path('my-links/', views.get_user_links, name='my_links'),
     path('<str:code>/', views.redirect_to_original, name='redirect'),
      path('', views.frontend, name='frontend'),
+      path('delete/<str:code>/', views.delete_link,name='delete-link'),  
 ]
