@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - DJANGO_SUPERUSER_USERNAME=admin
+      - DJANGO_SUPERUSER_PASSWORD=admin
+      - DJANGO_SUPERUSER_EMAIL=admin@example.com
+    command: >
+      sh -c "python manage.py makemigrations &&
+         python manage.py migrate &&
+             python manage.py createsuperuser --noinput || true &&
+             gunicorn shorturl.wsgi:application --bind 0.0.0.0:8000"

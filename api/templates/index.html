@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShortUrl – Modern URL Shortener</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-light: #e0e7ff;
+      --primary-dark: #3a56d0;
+      --text: #1e293b;
+      --text-light: #64748b;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --success: #10b981;
+      --error: #ef4444;
+      --radius: 12px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 480px;
+      width: 100%;
+      margin: auto;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: var(--text-light);
+      font-size: 16px;
+      font-weight: 400;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .btn-group .btn {
+      flex: 1;
+    }
+
+    .status {
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      margin: 16px 0;
+      font-size: 14px;
+    }
+
+    .status-success {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .status-error {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--error);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .links-list {
+      list-style: none;
+      margin-top: 16px;
+    }
+
+    .link-item {
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 12px;
+    }
+
+    .link-item a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      word-break: break-all;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .link-item a:hover {
+      text-decoration: underline;
+    }
+
+    .link-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-light);
+      margin-top: 8px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--text-light);
+      font-size: 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 16px;
+    }
+
+    .back-btn:hover {
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Choice Screen -->
+    <div id="choiceScreen" class="card">
+      <div class="header">
+        <div class="logo">ShortyAPI</div>
+        <div class="subtitle">Fast, reliable URL shortening</div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="showForm('register')">Register</button>
+        <button class="btn btn-secondary" onclick="showForm('login')">Login</button>
+      </div>
+    </div>
+
+    <!-- Register Form -->
+    <div id="registerScreen" class="card hidden">
+      <div class="header">
+        <div class="logo">Create Account</div>
+      </div>
+      <div class="form-group">
+        <label for="regUser">Username</label>
+        <input id="regUser" placeholder="Enter your username">
+      </div>
+      <div class="form-group">
+        <label for="regPass">Password</label>
+        <input id="regPass" type="password" placeholder="Create a password">
+      </div>
+      <button class="btn btn-primary" onclick="registerUser()">Sign Up</button>
+      <div id="registerStatus" class="status hidden"></div>
+      <button class="back-btn" onclick="goBack()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Back to home
+      </button>
+    </div>
+
+    <!-- Login Form -->
+    <div id="loginScreen" class="card hidden">
+      <div class="header">
+        <div class="logo">Welcome Back</div>
+      </div>
+      <div class="form-group">
+        <label for="loginUser">Username</label>
+        <input id="loginUser" placeholder="Enter your username">
+      </div>
+      <div class="form-group">
+        <label for="loginPass">Password</label>
+        <input id="loginPass" type="password" placeholder="Enter your password">
+      </div>
+      <button class="btn btn-primary" onclick="loginUser()">Sign In</button>
+      <div id="loginStatus" class="status hidden"></div>
+      <button class="back-btn" onclick="goBack()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Back to home
+      </button>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="hidden">
+      <div class="card">
+        <div class="header">
+          <div class="logo">Shorten URL</div>
+          <div class="subtitle">Make your links shorter and easier to share</div>
+        </div>
+        <div class="form-group">
+          <label for="longUrl">Destination URL</label>
+          <input id="longUrl" placeholder="https://example.com/very/long/url">
+        </div>
+        <button class="btn btn-primary" onclick="shortenUrl()">Shorten</button>
+        <div id="shortResult" class="status hidden"></div>
+      </div>
+
+      <div class="card">
+        <div class="header">
+          <div class="logo">Your Links</div>
+        </div>
+        <button class="btn btn-secondary" onclick="getMyLinks()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+            <path d="M3 3v5h5"></path>
+            <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path>
+            <path d="M16 16h5v5"></path>
+          </svg>
+          Refresh Links
+        </button>
+        <ul id="myLinks" class="links-list"></ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let accessToken = null;
+
+    function showForm(type) {
+      document.getElementById('choiceScreen').classList.add('hidden');
+      document.getElementById('registerScreen').classList.add('hidden');
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById(type + 'Screen').classList.remove('hidden');
+    }
+
+    function goBack() {
+      document.getElementById('choiceScreen').classList.remove('hidden');
+      document.getElementById('registerScreen').classList.add('hidden');
+      document.getElementById('loginScreen').classList.add('hidden');
+    }
+
+    function showDashboard() {
+      document.getElementById('choiceScreen').classList.add('hidden');
+      document.getElementById('registerScreen').classList.add('hidden');
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('dashboard').classList.remove('hidden');
+      getMyLinks();
+    }
+
+    function showStatus(id, message, type) {
+      const el = document.getElementById(id);
+      el.innerText = message;
+      el.className = `status status-${type}`;
+      el.classList.remove('hidden');
+    }
+
+    function registerUser() {
+      const username = document.getElementById('regUser').value.trim();
+      const password = document.getElementById('regPass').value.trim();
+      
+      if (!username || !password) {
+        showStatus('registerStatus', "Please fill in all fields", "error");
+        return;
+      }
+
+      fetch('/api/register/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.username) {
+          showStatus('registerStatus', "Account created successfully! Please login.", "success");
+          setTimeout(() => showForm('login'), 1500);
+        } else {
+          const error = data.username ? data.username[0] : "Registration failed";
+          showStatus('registerStatus', error, "error");
+        }
+      })
+      .catch(() => {
+        showStatus('registerStatus', "Network error. Please try again.", "error");
+      });
+    }
+
+    function loginUser() {
+      const username = document.getElementById('loginUser').value.trim();
+      const password = document.getElementById('loginPass').value.trim();
+      
+      if (!username || !password) {
+        showStatus('loginStatus', "Please fill in all fields", "error");
+        return;
+      }
+
+      fetch('/api/token/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.access) {
+          accessToken = data.access;
+          showStatus('loginStatus', "Login successful! Redirecting...", "success");
+          setTimeout(showDashboard, 1000);
+        } else {
+          showStatus('loginStatus', "Invalid credentials. Please try again.", "error");
+        }
+      })
+      .catch(() => {
+        showStatus('loginStatus', "Network error. Please try again.", "error");
+      });
+    }
+
+    function shortenUrl() {
+      if (!accessToken) {
+        showStatus('shortResult', "Please login first", "error");
+        return;
+      }
+
+      const url = document.getElementById('longUrl').value.trim();
+      if (!url) {
+        showStatus('shortResult', "Please enter a URL", "error");
+        return;
+      }
+
+      fetch('/api/shorten/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + accessToken
+        },
+        body: JSON.stringify({ original_url: url })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.short_code) {
+          const link = `${location.origin}/api/${data.short_code}`;
+          document.getElementById('shortResult').innerHTML = `
+            <div>Short URL created:</div>
+            <a href="${link}" target="_blank">${link}</a>
+          `;
+          showStatus('shortResult', "", "success");
+          document.getElementById('longUrl').value = '';
+          getMyLinks();
+        } else {
+          const error = data.original_url ? data.original_url[0] : "Failed to shorten URL";
+          showStatus('shortResult', error, "error");
+        }
+      })
+      .catch(() => {
+        showStatus('shortResult', "Network error. Please try again.", "error");
+      });
+    }
+
+    function getMyLinks() {
+      if (!accessToken) return;
+
+      fetch('/api/my-links/', {
+        headers: { 'Authorization': 'Bearer ' + accessToken }
+      })
+      .then(res => res.json())
+      .then(data => {
+        const list = document.getElementById('myLinks');
+        list.innerHTML = '';
+        
+        if (data.length === 0) {
+          list.innerHTML = `<li class="link-item">You haven't created any short links yet.</li>`;
+          return;
+        }
+
+        data.forEach(link => {
+          const li = document.createElement('li');
+          li.className = "link-item";
+          li.innerHTML = `
+            <a href="/api/${link.short_code}" target="_blank">${location.origin}/api/${link.short_code}</a>
+            <div class="link-meta">
+              <span>${link.clicks} clicks</span>
+              <span>${new Date(link.created_at).toLocaleDateString()}</span>
+            </div>
+            <div style="margin-top: 4px; font-size: 13px; color: var(--text-light); word-break: break-all;">
+              ${link.original_url}
+            </div>
+          `;
+          list.appendChild(li);
+        });
+      })
+      .catch(() => {
+        const list = document.getElementById('myLinks');
+        list.innerHTML = `<li class="link-item">Error loading links. Please try again.</li>`;
+      });
+    }
+  </script>
+</body>
+</html>
