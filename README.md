@@ -65,6 +65,12 @@ venv\Scripts\activate         # Windows
 3️⃣ Install Dependencies
 pip install -r requirements.txt
 
+3 Create .env
+SECRET_KEY=""
+DEBUG=False
+DATABASE_URL=""
+ALLOWED_HOSTS=*
+
 
 Example requirements.txt:
 
