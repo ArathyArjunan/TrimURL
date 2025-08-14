@@ -351,7 +351,7 @@
         return;
       }
 
-      fetch('/api/register/', {
+      fetch('/register/', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ username, password })
@@ -380,7 +380,7 @@
         return;
       }
 
-      fetch('/api/token/', {
+      fetch('/token/', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ username, password })
@@ -412,7 +412,7 @@
         return;
       }
 
-      fetch('/api/shorten/', {
+      fetch('/shorten/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -444,7 +444,7 @@
     function getMyLinks() {
       if (!accessToken) return;
 
-      fetch('/api/my-links/', {
+      fetch('/my-links/', {
         headers: { 'Authorization': 'Bearer ' + accessToken }
       })
       .then(res => res.json())
